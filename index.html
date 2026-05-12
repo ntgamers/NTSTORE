@@ -9,10 +9,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
-    <!-- ADS SCRIPTS -->
-    <script src="https://pl29111214.profitablecpmratenetwork.com/a3/56/21/a3562156f1074690d7af1f7c051343de.js"></script>
-    <script src="https://pl29111216.profitablecpmratenetwork.com/ac/0f/7b/ac0f7b5b5981b2f875df57dfc5879ef9.js"></script>
-
     <style>
         /* ANIMATIONS */
         @keyframes rgbMove { to { background-position: 200% center; } }
@@ -30,11 +26,6 @@
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
             70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(56, 189, 248, 0); }
             100% { transform: scale(0.95); }
-        }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-            40% {transform: translateY(-8px);}
-            60% {transform: translateY(-4px);}
         }
 
         :root { 
@@ -95,10 +86,6 @@
         .modal-box { background: #0f172a; padding: 30px; border-radius: 35px; border: 2px solid #334155; width: 100%; max-width: 400px; text-align: center; }
         .modal-box input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 15px; background: #020617; color: #fff; border: 1px solid #334155; text-align: center; }
         .file-label { display: block; background: rgba(56, 189, 248, 0.1); color: var(--primary); padding: 14px; border-radius: 15px; margin: 10px 0; border: 2px dashed var(--primary); cursor: pointer; font-weight: 900; }
-
-        /* ADS & HINTS STYLING */
-        #banner-ad-box { width: 100%; text-align: center; margin: 0; display: block; min-height: 50px; }
-        #scroll-hint-box { display: block; text-align: center; color: var(--primary); font-weight: 900; font-size: 0.9rem; padding: 15px 0 5px 0; animation: bounce 2s infinite; }
     </style>
 </head>
 <body onclick="handleGlobalClick()">
@@ -139,19 +126,6 @@
                 <button class="icon-btn" onclick="toggleSearch()">🔍</button>
             </div>
         </header>
-
-        <!-- BANNER AD SECTION & SCROLL HINT (MESSSAGE AT THE VERY TOP OF CONTENT) -->
-        <div id="banner-ad-box">
-            <!-- Message comes first -->
-            <div id="scroll-hint-box">
-                <span style="background:rgba(56, 189, 248, 0.1); padding: 8px 20px; border-radius: 25px; border: 1px solid var(--primary); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);">
-                    ⬇️ SCROLL DOWN FOR APPS ⬇️
-                </span>
-            </div>
-            <!-- Ad comes second -->
-            <div id="container-2e58127830f07fc86cbe063ed297bdcc"></div>
-            <script async="async" data-cfasync="false" src="https://pl29111217.profitablecpmratenetwork.com/2e58127830f07fc86cbe063ed297bdcc/invoke.js"></script>
-        </div>
 
         <div id="search-container" style="display:none; width:92%; margin:10px auto;">
             <input type="text" id="searchInput" placeholder="Search apps..." onkeyup="filterApps()" style="width:100%; padding:15px; border-radius:50px; border:2px solid var(--primary); background:var(--card); color:var(--text); text-align:center; font-weight:bold;">
@@ -297,11 +271,7 @@
         let pressTimer;
         let currentTab = 'home'; 
 
-        function handleGlobalClick() {
-            if (currentTab === 'home' || currentTab === 'pc') {
-                window.open('https://www.profitablecpmratenetwork.com/uitj6ddr?key=4fda0e6c3f1a6d74bf19cdb37bfd93c3', '_blank');
-            }
-        }
+        function handleGlobalClick() { }
 
         function toggleTheme() {
             const body = document.body;
@@ -322,13 +292,6 @@
             document.getElementById('searchInput').value = ""; 
             filterApps();
             document.getElementById('search-container').style.display = 'none';
-
-            const bannerBox = document.getElementById('banner-ad-box');
-            if(name === 'home' || name === 'pc') {
-                bannerBox.style.display = 'block';
-            } else {
-                bannerBox.style.display = 'none';
-            }
 
             ['home','pc','vip','about'].forEach(id => {
                 const sec = document.getElementById(id+'-sec'); if(sec) sec.style.display = (id===name ? 'grid' : 'none');
