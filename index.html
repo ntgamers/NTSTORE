@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NT STORE</title>
+    <title>NT STORE PRO</title>
 
     <!-- FIREBASE SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -11,187 +11,141 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
         /* ANIMATIONS */
         @keyframes rgbMove { to { background-position: 200% center; } }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes navPop { 0% { transform: scale(0.8); } 100% { transform: scale(1); } }
-        @keyframes ringPing {
-            0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
-            70% { box-shadow: 0 0 0 12px rgba(56, 189, 248, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
-        }
-        @keyframes cardEntrance {
-            0% { opacity: 0; transform: scale(0.8) translateY(50px); filter: blur(10px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
-        }
-        @keyframes blueGlow {
-            0% { box-shadow: 0 0 5px rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.3); }
-            50% { box-shadow: 0 0 20px rgba(56, 189, 248, 0.8), inset 0 0 10px rgba(56, 189, 248, 0.4); border-color: #38bdf8; }
-            100% { box-shadow: 0 0 5px rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.3); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes navPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
+        /* THEME SYSTEM */
         :root { 
-            --bg: #020617; --card: #0f172a; --text: #f8fafc; 
-            --primary: #38bdf8; --nav: rgba(15, 23, 42, 0.95); --border: rgba(255, 255, 255, 0.1);
+            --bg: #f8f9fa; --card: #ffffff; --text: #1a1c1e; 
+            --primary: #0061ff; --nav: rgba(255, 255, 255, 0.9); 
+            --border: #edf2f7; --subtext: #718096;
         }
 
-        .light-theme { 
-            --bg: #f8fafc; --card: #ffffff; --text: #0f172a; 
-            --primary: #0284c7; --nav: rgba(255, 255, 255, 0.95); --border: #cbd5e1;
+        .amoled-theme { 
+            --bg: #000000; --card: #0a0a0a; --text: #ffffff; 
+            --primary: #38bdf8; --nav: rgba(10, 10, 10, 0.9); 
+            --border: #1a1a1a; --subtext: #a0aec0;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; scroll-behavior: smooth; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; transition: 0.3s; overflow-x: hidden; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; transition: all 0.3s ease; overflow-x: hidden; }
 
-        /* LOADER STAGES */
+        /* ORIGINAL LOADER STYLE REVERTED WITH COUNT */
         #loader-stage1 { position: fixed; inset: 0; background: #020617; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100000; }
         .spinner { width: 50px; height: 50px; border: 5px solid rgba(56,189,248,0.1); border-top-color: #38bdf8; border-radius: 50%; animation: spin 1s linear infinite; }
+        .rgb-text-loader { font-weight: 900; background: linear-gradient(90deg, #ff00ff, #ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0000ff); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rgbMove 2s linear infinite; font-size: 1.1rem; margin-top: 20px; }
+        #load-count { color: #fff; font-size: 1.5rem; font-weight: 900; margin-top: 10px; }
 
-        #login-stage { position: fixed; inset: 0; background: #020617; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; padding: 20px; }
-        .login-card { background: #0f172a; padding: 40px 30px; border-radius: 40px; border: 1px solid #1e293b; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .google-btn { background: #fff; color: #000; padding: 15px; border-radius: 15px; width: 100%; font-weight: 900; border: none; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; }
-        .guest-btn { background: transparent; color: #94a3b8; border: 1px solid #334155; padding: 12px; border-radius: 15px; width: 100%; font-weight: 600; cursor: pointer; }
-        .enter-btn { background: var(--primary); color: #fff; padding: 15px; border-radius: 15px; width: 100%; font-weight: 900; border: none; cursor: pointer; animation: ringPing 2s infinite; }
+        /* SLIM COMPACT HEADER WITH BLUE LINE */
+        header { 
+            position: sticky; top: 0; z-index: 20000; padding: 8px 16px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: var(--nav); backdrop-filter: blur(20px); 
+            border-bottom: 2px solid var(--primary); 
+        }
+        .logo-box { background: #111827; padding: 4px 12px; border-radius: 10px; border: 1px solid #1f2937; }
+        .logo-text { font-weight: 800; background: linear-gradient(90deg, #ff00ff, #0070f3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 0.95rem; margin: 0; }
+        
+        .header-controls { display: flex; gap: 8px; }
+        .icon-btn { background: var(--card); color: var(--text); border: 2px solid var(--primary); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; }
 
-        #loader-stage2 { position: fixed; inset: 0; background: #000; display: none; z-index: 99998; padding: 15px; flex-direction: column; align-items: center; justify-content: center; }
-        .video-wrapper { width: 100%; height: 90vh; max-width: 450px; border: 3px solid #38bdf8; border-radius: 35px; overflow: hidden; position: relative; background: #000; box-shadow: 0 20px 50px rgba(56, 189, 248, 0.3); }
-        #intro-video { width: 100%; height: 100%; object-fit: contain; }
-        .skip-btn-modern { position: absolute; top: 25px; right: 25px; display: flex; flex-direction: column; align-items: center; z-index: 100001; }
-        .skip-circle { width: 50px; height: 50px; border-radius: 50%; background: rgba(15, 23, 42, 0.8); border: 2px solid #22c55e; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; backdrop-filter: blur(10px); cursor: pointer; }
-
-        /* HEADER */
-        header { position: sticky; top: 0; z-index: 20000; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
-        .rgb-text { font-weight: 900; background: linear-gradient(90deg, #ff00ff, #ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0000ff); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rgbMove 2s linear infinite; font-size: 1rem; margin: 0; }
-        .header-controls { display: flex; gap: 6px; align-items: center; }
-        .icon-btn { background: #38bdf8; color: #fff; border: none; width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; }
-        .profile-btn { border: 2px solid var(--primary); padding: 0; background: #000; border-radius: 50% !important; width: 38px; height: 38px; overflow: hidden; }
-        .profile-btn img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* CONTAINERS */
-        .container { max-width: 1100px; width: 92%; margin: 15px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .app-card { background: var(--card); border-radius: 35px; padding: 25px; text-align: center; border: 1px solid var(--border); transition: 0.4s; animation: cardEntrance 0.5s ease-out forwards; position: relative; overflow: hidden; }
-        .app-card:hover { border-color: #38bdf8; box-shadow: 0 0 25px rgba(56, 189, 248, 0.6); transform: translateY(-5px); animation: blueGlow 1.5s infinite; }
-        .app-logo-box { width: 85px; height: 85px; margin: 0 auto 15px; border-radius: 22px; background: #000; overflow: hidden; border: 2px solid #334155; }
+        /* APP CARDS */
+        .container { max-width: 1200px; width: 92%; margin: 20px auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 18px; }
+        .app-card { background: var(--card); border-radius: 24px; padding: 18px; text-align: center; border: 2px solid var(--primary); box-shadow: 0 4px 15px rgba(0, 97, 255, 0.1); animation: fadeIn 0.5s ease; transition: 0.3s; }
+        .app-card:active { transform: translateY(-12px) scale(1.03); }
+        .app-logo-box { width: 80px; height: 80px; margin: 0 auto 12px; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
         .app-logo-box img { width: 100%; height: 100%; object-fit: cover; }
-        .download-btn { display: block; background: var(--primary); color: #fff; padding: 15px; border-radius: 18px; font-weight: 900; margin-top: 15px; border: none; width: 100%; cursor: pointer; }
+        .app-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+        .download-btn { display: block; background: var(--primary); color: #fff; padding: 10px; border-radius: 12px; font-weight: 700; font-size: 0.8rem; border: none; width: 100%; cursor: pointer; }
+        .download-btn.active-dl { background: #22c55e; pointer-events: none; }
+
+        /* BOTTOM NAV TOUCHED TO BOTTOM WITH BLUE LINE */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: var(--nav); backdrop-filter: blur(20px); display: flex; justify-content: space-around; align-items: center; border-top: 2px solid var(--primary); z-index: 10000; }
+        .nav-item { text-decoration: none; color: #94a3b8; font-weight: 800; font-size: 0.65rem; text-align: center; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 2; }
+        .nav-item.active { color: #fff; }
+        .nav-item.active::before { content: ""; position: absolute; width: 50px; height: 50px; background: var(--primary); border-radius: 50%; z-index: -1; box-shadow: 0 0 15px var(--primary); animation: navPop 0.3s forwards; }
+        .nav-icon { display: block; font-size: 1.4rem; margin-bottom: 2px; }
 
         /* MODALS */
-        .screen-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 30000; padding: 20px; }
-        .modal-box { background: #0f172a; padding: 30px; border-radius: 35px; border: 2px solid #334155; width: 100%; max-width: 400px; text-align: center; }
-        .modal-box input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 15px; background: #020617; color: #fff; border: 1px solid #334155; text-align: center; font-weight: bold; }
-        .file-label { display: block; background: rgba(56, 189, 248, 0.1); color: var(--primary); padding: 14px; border-radius: 15px; margin: 10px 0; border: 2px dashed var(--primary); cursor: pointer; font-weight: 900; }
+        .screen-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 30000; }
+        .modal-box { background: var(--card); padding: 25px; border-radius: 28px; width: 90%; max-width: 380px; text-align: center; border: 2px solid var(--primary); }
+        .modal-box input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-weight: 600; text-align: center; }
         
-        .nt-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .num-btn { background: #1e293b; color: #fff; border: 1px solid #334155; padding: 15px; border-radius: 15px; font-weight: 900; font-size: 1.3rem; }
-        .num-btn.del { background: #7f1d1d; }
-        .num-btn.verify { background: #22c55e; grid-column: span 3; margin-top: 5px; }
+        .target-btn { margin-bottom: 12px !important; }
 
-        .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 550px; height: 75px; background: var(--nav); backdrop-filter: blur(20px); border-radius: 50px; display: flex; justify-content: space-around; align-items: center; border: 1px solid var(--border); z-index: 10000; }
-        .nav-item { text-decoration: none; color: #94a3b8; font-weight: 800; font-size: 0.65rem; text-align: center; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .nav-item.active { color: #fff; }
-        .nav-item.active::before { content: ""; position: absolute; width: 58px; height: 58px; background: var(--primary); border-radius: 50%; z-index: -1; box-shadow: 0 0 20px var(--primary); transform: translateY(-2px); animation: navPop 0.3s ease; }
-        .nav-icon { display: block; font-size: 1.5rem; margin-bottom: 2px; }
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .key-btn { background: var(--card); color: var(--text); border: 2px solid var(--primary); padding: 15px; border-radius: 14px; font-weight: 700; transition: 0.2s; }
+        .key-btn:active { background: var(--primary); color: #fff; }
+
+        .search-input { width: 92%; margin: 10px auto; padding: 12px 20px; border-radius: 16px; border: 2px solid var(--primary); background: var(--card); color: var(--text); display: none; }
     </style>
 </head>
 <body>
 
-    <div id="loader-stage1"><div class="spinner"></div><div class="rgb-text" style="margin-top:20px;">NT STORE LOADING...</div></div>
+    <!-- LOADER -->
+    <div id="loader-stage1">
+        <div class="spinner"></div>
+        <div class="rgb-text-loader">NT STORE LOADING...</div>
+        <div id="load-count">0%</div>
+    </div>
     
-    <div id="login-stage">
-        <div class="login-card" id="login-card-content"></div>
-    </div>
-
-    <div id="loader-stage2">
-        <div class="video-wrapper">
-            <div class="skip-btn-modern" onclick="finishIntro()">
-                <div class="skip-circle">⏭️</div>
-                <span style="color:#22c55e; font-size:10px; font-weight:900; margin-top:5px;">SKIP</span>
-            </div>
-            <video id="intro-video" playsinline><source src="https://files.catbox.moe/311fo2.mp4" type="video/mp4"></video>
-        </div>
-    </div>
-
-    <div id="main-app" style="display:none; padding-bottom: 120px;">
+    <div id="main-app" style="display:none; padding-bottom: 100px;">
         <header>
-            <div style="background: #111827; padding: 4px 12px; border-radius: 10px; border: 1px solid #1f2937;">
-                <h1 class="rgb-text" style="font-size: 0.95rem;">NT STORE</h1>
-            </div>
+            <div class="logo-box"><h1 class="logo-text">NT STORE</h1></div>
             <div class="header-controls">
-                <button class="icon-btn profile-btn" onclick="openLogoutModal()"><img id="user-img-header" src="https://cdn-icons-png.flaticon.com/512/149/149071.png"></button>
                 <button class="icon-btn" onclick="toggleTheme()">☀️</button>
                 <button class="icon-btn" onclick="toggleSearch()">🔍</button>
             </div>
         </header>
 
-        <div id="search-container" style="display:none; width:92%; margin:10px auto;">
-            <input type="text" id="searchInput" placeholder="Search apps..." onkeyup="filterApps()" style="width:100%; padding:15px; border-radius:50px; border:2px solid var(--primary); background:var(--card); color:var(--text); text-align:center; font-weight:bold;">
-        </div>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search apps..." onkeyup="filterApps()">
 
         <div id="home-sec" class="container"></div>
         <div id="pc-sec" class="container" style="display:none;"></div>
 
-        <!-- VIP SECTION (ORIGINAL 100%) -->
+        <!-- VIP SECTION -->
         <div id="vip-sec" class="container" style="display:none;">
-            <div id="vip-locked" style="grid-column: 1/-1; display:flex; flex-direction:column; align-items:center;">
-                <h1 class="rgb-text" style="font-size: 1.4rem; margin-bottom: 20px;">⭐ VIP PREMIUM ⭐</h1>
-                <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%;">
-                    <div class="app-card" style="border: 2px solid #fbbf24; width: 100%; max-width: 300px;">
-                        <div style="color:#fbbf24; font-weight:900;">STARTER PACK</div>
-                        <div style="font-size:2.5rem; color:#fbbf24; margin:10px 0;">₹29</div>
-                        <p style="color:#94a3b8; font-weight:bold;">✅ GLOBAL APP UPLOADING ACCESS</p>
-                        <button class="download-btn" style="background:#fbbf24; color:#000;" onclick="pay(29, 'Starter')">PAY NOW</button>
-                    </div>
-                    <div class="app-card" style="border: 2px solid #38bdf8; width: 100%; max-width: 300px;">
-                        <div style="color:#38bdf8; font-weight:900;">PRO PACK</div>
-                        <div style="font-size:2.5rem; color:#38bdf8; margin:10px 0;">₹999</div>
-                        <p style="color:#94a3b8; font-weight:bold;">✅ ALL FEATURES + NO ADS + PRO BADGE</p>
-                        <button class="download-btn" style="background:#38bdf8; color:#fff;" onclick="pay(999, 'Pro')">PAY NOW</button>
-                    </div>
-                    <div class="app-card" style="border: 2px solid #ef4444; width: 100%; max-width: 300px;">
-                        <div style="color:#ef4444; font-weight:900;">ULTIMATE PACK</div>
-                        <div style="font-size:2.5rem; color:#ef4444; margin:10px 0;">₹10,000</div>
-                        <p style="color:#94a3b8; font-weight:bold;">✅ LIFETIME ACCESS + ADMIN SUPPORT</p>
-                        <button class="download-btn" style="background:#ef4444; color:#fff;" onclick="pay(10000, 'Ultimate')">PAY NOW</button>
-                    </div>
+            <div id="vip-locked" style="width:100%;">
+                <h2 style="text-align:center;">VIP PREMIUM</h2>
+                <div class="app-card" style="max-width: 350px; margin: 0 auto 20px; border-color: #fbbf24;">
+                    <div style="color:#fbbf24; font-weight:800; font-size:1.3rem;">VIP PREMIUM</div>
+                    <div style="font-size: 2.2rem; margin:10px 0; font-weight: 900;">₹29</div>
+                    <button class="download-btn" style="background:#fbbf24; color:#000;" onclick="handlePayment()">BUY NOW</button>
                 </div>
-                <div style="background:#111827; border:1px solid #334155; border-radius:25px; padding:20px; margin-top:25px; width:100%; max-width:350px;">
-                    <input type="text" id="activationInput" readonly placeholder="ENTER VIP CODE" style="width:100%; padding:12px; border-radius:12px; background:#020617; border:1px solid #334155; color:#fff; text-align:center; font-weight:bold;">
-                    <div class="nt-keypad">
-                        <button class="num-btn" onclick="pressNum('1')">1</button><button class="num-btn" onclick="pressNum('2')">2</button><button class="num-btn" onclick="pressNum('3')">3</button>
-                        <button class="num-btn" onclick="pressNum('4')">4</button><button class="num-btn" onclick="pressNum('5')">5</button><button class="num-btn" onclick="pressNum('6')">6</button>
-                        <button class="num-btn" onclick="pressNum('7')">7</button><button class="num-btn" onclick="pressNum('8')">8</button><button class="num-btn" onclick="pressNum('9')">9</button>
-                        <button class="num-btn del" onclick="pressNum('del')">⌫</button><button class="num-btn" onclick="pressNum('0')">0</button>
-                        <button class="num-btn verify" onclick="activateVIP()">VERIFY CODE</button>
+                <div style="background:var(--card); padding:20px; border-radius:24px; max-width:350px; margin:0 auto; border:2px solid var(--primary);">
+                    <input type="text" id="activationInput" readonly placeholder="ENTER CODE">
+                    <div class="keypad">
+                        <button class="key-btn" onclick="pressNum('1')">1</button><button class="key-btn" onclick="pressNum('2')">2</button><button class="key-btn" onclick="pressNum('3')">3</button>
+                        <button class="key-btn" onclick="pressNum('4')">4</button><button class="key-btn" onclick="pressNum('5')">5</button><button class="key-btn" onclick="pressNum('6')">6</button>
+                        <button class="key-btn" onclick="pressNum('7')">7</button><button class="key-btn" onclick="pressNum('8')">8</button><button class="key-btn" onclick="pressNum('9')">9</button>
+                        <button class="key-btn" style="border-color:#ef4444; color:#ef4444" onclick="pressNum('del')">⌫</button><button class="key-btn" onclick="pressNum('0')">0</button>
+                        <button class="key-btn" style="border-color:#22c55e; color:#22c55e" onclick="activateVIP()">OK</button>
                     </div>
                 </div>
             </div>
-            <div id="vip-unlocked" style="display:none; grid-column:1/-1; text-align:center;">
-                <h1 class="rgb-text">VIP UNLOCKED</h1>
-                <div id="vip-timer" style="font-size:1.2rem; font-weight:900; color:#fbbf24; margin:15px; background:rgba(251,191,36,0.1); padding:10px; border-radius:15px; display:inline-block; border:1px dashed #fbbf24;">TIME LEFT: 30:00</div>
+            <div id="vip-unlocked" style="display:none; text-align:center; width:100%;">
+                <h2 class="logo-text" style="font-size: 1.5rem;">VIP ACTIVE</h2>
+                <div id="vip-timer" style="color:#fbbf24; font-weight:800; text-align: center; margin-bottom: 20px;"></div>
                 <div id="vip-list" class="container"></div>
             </div>
         </div>
 
-        <!-- ABOUT SECTION (ORIGINAL 100%) -->
-        <div id="about-sec" class="container" style="display:none; text-align:center;" onmousedown="startPress()" onmouseup="endPress()" ontouchstart="startPress()" ontouchend="endPress()">
-             <div class="app-card" style="grid-column:1/-1;">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToAT3dXNvWyoTkr_MpIKIg57XyfMl_NGqdoQ&s" style="width:110px; height:110px; border-radius:50%; border:3px solid var(--primary); object-fit:cover; margin-bottom:15px;">
-                <h1 class="rgb-text">NT GAMER 1M</h1>
-                <button class="download-btn" style="background:#ff0000;" onclick="window.open('https://youtube.com/@ntgamer.1m')">📺 YouTube</button>
-                <button class="download-btn" style="background:#5865F2; margin-top:15px;" onclick="window.open('https://discord.gg/D6MYrhuXv')">💬 Discord</button>
-             </div>
-             <div class="app-card" style="grid-column:1/-1; text-align: left; background: rgba(15, 23, 42, 0.8);">
-                <h2 class="rgb-text" style="font-size: 1.6rem; text-align: center; margin-bottom: 15px;">ABOUT NT STORE</h2>
-                <p style="color: #cbd5e1; line-height: 1.6; font-size: 1.05rem; font-weight: 500;">
-                    Welcome to <span style="color:var(--primary); font-weight:900;">NT STORE</span>. Pro versions of your favorite applications for absolutely free. 
-                </p>
-                <div style="background: rgba(56, 189, 248, 0.1); padding: 20px; border-radius: 20px; border: 1px dashed var(--primary); margin-top: 20px;">
-                    <h3 style="color: var(--primary); margin-top: 0; font-size: 1.2rem;">🚀 BECOME A PUBLISHER</h3>
-                    <p style="color: #94a3b8; font-size: 0.95rem;">
-                        Purchase the <span style="color:#fbbf24; font-weight:bold;">₹29 Starter Pack</span> to unlock Global Upload!
-                    </p>
-                </div>
-             </div>
+        <div id="about-sec" class="container" style="display:none; grid-template-columns: 1fr;" 
+             onmousedown="startPress()" onmouseup="endPress()" onmouseleave="endPress()"
+             ontouchstart="startPress()" ontouchend="endPress()">
+            <div class="app-card" style="padding:40px 20px;">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToAT3dXNvWyoTkr_MpIKIg57XyfMl_NGqdoQ&s" style="width:80px; height:80px; border-radius:50%; margin-bottom:15px; border:3px solid var(--primary);">
+                <h2 class="logo-text">NT GAMER 1M</h2>
+                <button class="download-btn" style="background:#ff0000; margin-top:10px;" onclick="window.open('https://youtube.com/@nt.gamerr?si=xtgXfDxc2a1ZFsOY')">YouTube</button>
+                <button class="download-btn" style="background:#5865f2; margin-top:10px;" onclick="window.open('https://discord.gg/D6MYrhuXv')">Discord</button>
+            </div>
         </div>
 
         <nav class="bottom-nav">
@@ -203,46 +157,33 @@
         </nav>
     </div>
 
-    <!-- PLUS SYSTEM MODALS -->
-    <div id="plus-no-vip" class="screen-overlay">
-        <div class="modal-box">
-            <h2 class="rgb-text">PERMISSION</h2>
-            <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:15px; margin:15px 0;">
-                <p style="color:#fff; font-weight:bold;">Upload access requires Starter Pack (₹29).</p>
-            </div>
-            <button class="download-btn" onclick="tab('vip'); closeModals();">BUY NOW</button>
-            <button class="download-btn" style="background:#1e293b;" onclick="closeModals()">CANCEL</button>
+    <!-- UPLOAD MODAL -->
+    <div id="upload-modal" class="screen-overlay">
+        <div class="modal-box" id="upload-step-1">
+            <h2 class="logo-text">PUBLISH APP</h2>
+            <input type="text" id="up-name" placeholder="App Name">
+            <input type="text" id="up-link" placeholder="Download Link">
+            <input type="file" id="up-logo" accept="image/*" style="display:none" onchange="previewLogo()">
+            <button class="download-btn" style="background:var(--bg); color:var(--text); border:1px solid var(--border);" onclick="document.getElementById('up-logo').click()">SELECT PHOTO</button>
+            <div id="up-logo-status" style="font-size:0.8rem; color:#22c55e; margin-top:5px; display:none;">Photo Selected!</div>
+            <button class="download-btn" style="margin-top:15px; border: 2px solid var(--primary);" onclick="nextUploadStep()">NEXT</button>
+            <button class="download-btn" style="background:transparent; color:var(--subtext);" onclick="closeModals()">CANCEL</button>
         </div>
-    </div>
-
-    <div id="plus-upload-form" class="screen-overlay">
-        <div class="modal-box">
-            <h2 class="rgb-text">PUBLISH APP</h2>
-            <input type="text" id="new-app-name" placeholder="App Name">
-            <label class="file-label" for="new-app-logo">🖼️ SELECT LOGO</label>
-            <input type="file" id="new-app-logo" accept="image/*" style="display:none" onchange="previewLogo()">
-            <span id="logo-status" style="color:#22c55e; display:none; font-weight:900;">Logo Selected!</span>
-            <input type="text" id="new-app-link" placeholder="MediaFire Link">
-            <button class="download-btn" onclick="publishNewApp()">PUBLISH NOW</button>
-            <button class="download-btn" style="background:#1e293b;" onclick="closeModals()">CANCEL</button>
-        </div>
-    </div>
-
-    <!-- MODALS -->
-    <div id="logout-modal" class="screen-overlay">
-        <div class="modal-box">
-            <h2 class="rgb-text">LOGOUT</h2>
-            <p style="color:#94a3b8; font-weight:600;">Are you sure you want to logout?</p>
-            <button class="download-btn" style="background:#ef4444;" onclick="confirmLogout()">LOGOUT</button>
-            <button class="download-btn" style="background:#1e293b;" onclick="closeModals()">CANCEL</button>
+        <div class="modal-box" id="upload-step-2" style="display:none;">
+            <h2 class="logo-text">SELECT SECTION</h2>
+            <p style="font-size:0.9rem; margin-bottom: 20px;">Choose upload target:</p>
+            <button class="download-btn target-btn" onclick="finishUpload('home')">HOME SECTION</button>
+            <button class="download-btn target-btn" onclick="finishUpload('pc')">PC SECTION</button>
+            <button class="download-btn target-btn" onclick="finishUpload('vip')">VIP SECTION</button>
+            <button class="download-btn" style="background:transparent; color:var(--primary); margin-top:10px; border:1px dashed var(--primary);" onclick="prevUploadStep()">BACK</button>
         </div>
     </div>
 
     <div id="admin-modal" class="screen-overlay">
-        <div class="modal-box" style="max-height:80vh; overflow-y:auto;">
-            <h2 class="rgb-text">DATABASE</h2>
+        <div class="modal-box" style="max-height:80vh; overflow-y:auto; text-align: left;">
+            <h3 style="text-align:center">DATABASE</h3>
             <div id="admin-app-list"></div>
-            <button class="download-btn" style="background:#334155;" onclick="closeModals()">CLOSE</button>
+            <button class="download-btn" onclick="closeModals()" style="margin-top:20px">CLOSE</button>
         </div>
     </div>
 
@@ -250,56 +191,74 @@
         const firebaseConfig = { apiKey: "AIzaSy...", databaseURL: "https://nt-base-default-rtdb.firebaseio.com/", authDomain: "nt-base.firebaseapp.com" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const auth = firebase.auth();
-        let pressTimer, tempLogo = "";
+        let pressTimer, amoled = false, tempLogo = "";
 
         window.onload = () => {
             renderApps();
-            setTimeout(() => {
-                document.getElementById('loader-stage1').style.display = 'none';
-                const session = localStorage.getItem("nt_session");
-                const card = document.getElementById('login-card-content');
-                if(session) {
-                    const u = JSON.parse(session);
-                    document.getElementById('user-img-header').src = u.img;
-                    card.innerHTML = `<img src="${u.img}" style="width:80px;height:80px;border-radius:50%;margin-bottom:15px;border:2px solid var(--primary);"><h1 class="rgb-text">Welcome Back</h1><p style="color:#94a3b8;font-weight:bold;">${u.name}</p><button class="enter-btn" onclick="startVideoStage()">ENTER NT STORE</button>`;
-                } else {
-                    card.innerHTML = `<h1 class="rgb-text" style="font-size: 2rem; margin-bottom: 10px;">WELCOME</h1><p style="color:#64748b;margin-bottom:30px;font-weight:600;">Log in to access pro features</p><button class="google-btn" onclick="loginWithGoogle()"><img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" width="20"> Google Login</button><button class="guest-btn" onclick="confirmGuest()">Guest Account</button>`;
+            let count = 0;
+            let loaderInt = setInterval(() => {
+                count++;
+                document.getElementById('load-count').innerText = count + "%";
+                if(count >= 100) {
+                    clearInterval(loaderInt);
+                    document.getElementById('loader-stage1').style.display = 'none';
+                    document.getElementById('main-app').style.display = 'block';
+                    if(localStorage.getItem("nt_vip_king_v11") === "true") {
+                        document.getElementById('vip-locked').style.display = 'none';
+                        document.getElementById('vip-unlocked').style.display = 'block';
+                    }
                 }
-                document.getElementById('login-stage').style.display = 'flex';
-            }, 2500);
+            }, 40);
             setInterval(updateTimer, 1000);
         };
 
-        function startVideoStage() { document.getElementById('login-stage').style.display = 'none'; document.getElementById('loader-stage2').style.display = 'flex'; const vid = document.getElementById('intro-video'); vid.muted = false; vid.play(); vid.onended = () => finishIntro(); }
-        function finishIntro() { const vid = document.getElementById('intro-video'); vid.pause(); vid.currentTime = 0; document.getElementById('loader-stage2').style.display = 'none'; document.getElementById('main-app').style.display = 'block'; if(localStorage.getItem("nt_vip_king_v11") === "true") { document.getElementById('vip-locked').style.display = 'none'; document.getElementById('vip-unlocked').style.display = 'block'; } }
-
-        function handlePlusClick() {
-            if(localStorage.getItem("nt_vip_king_v11") === "true") document.getElementById('plus-upload-form').style.display = 'flex';
-            else document.getElementById('plus-no-vip').style.display = 'flex';
-        }
-
-        function previewLogo() {
-            const f = document.getElementById('new-app-logo').files[0];
-            const r = new FileReader();
-            r.onloadend = () => { tempLogo = r.result; document.getElementById('logo-status').style.display = 'block'; };
-            if(f) r.readAsDataURL(f);
-        }
-
-        function publishNewApp() {
-            const n = document.getElementById('new-app-name').value;
-            const l = document.getElementById('new-app-link').value;
-            if(!n || !l || !tempLogo) return alert("Please fill all fields!");
-            database.ref('public_apps').push({ name: n, logo: tempLogo, file: l, target: 'home' }).then(() => { alert("App Published!"); closeModals(); });
-        }
+        function handlePayment() { window.location.href = `upi://pay?pa=naitikthakare12345@oksbi&pn=NTSTORE&am=29&cu=INR`; }
+        function toggleTheme() { amoled = !amoled; document.body.className = amoled ? "amoled-theme" : ""; }
 
         function tab(name) {
             window.scrollTo(0,0);
             ['home','pc','vip','about'].forEach(id => {
                 document.getElementById(id+'-sec').style.display = (id===name ? 'grid' : 'none');
-                document.getElementById('nav-'+id).classList.remove('active');
+                document.getElementById('nav-'+id).classList.toggle('active', id===name);
             });
-            document.getElementById('nav-'+name).classList.add('active');
+        }
+
+        function handlePlusClick() {
+            if(localStorage.getItem("nt_vip_king_v11") === "true") {
+                document.getElementById('upload-modal').style.display = 'flex';
+                document.getElementById('upload-step-1').style.display = 'block';
+                document.getElementById('upload-step-2').style.display = 'none';
+            } else { alert("VIP Access Required to Upload!"); tab('vip'); }
+        }
+
+        function previewLogo() {
+            const f = document.getElementById('up-logo').files[0];
+            const r = new FileReader();
+            r.onloadend = () => { tempLogo = r.result; document.getElementById('up-logo-status').style.display = 'block'; };
+            if(f) r.readAsDataURL(f);
+        }
+
+        function nextUploadStep() {
+            if(!document.getElementById('up-name').value || !document.getElementById('up-link').value || !tempLogo) return alert("Fill all data!");
+            document.getElementById('upload-step-1').style.display = 'none';
+            document.getElementById('upload-step-2').style.display = 'block';
+        }
+
+        function prevUploadStep() {
+            document.getElementById('upload-step-2').style.display = 'none';
+            document.getElementById('upload-step-1').style.display = 'block';
+        }
+
+        function finishUpload(target) {
+            database.ref('public_apps').push({ name: document.getElementById('up-name').value, file: document.getElementById('up-link').value, logo: tempLogo, target: target }).then(() => location.reload());
+        }
+
+        function simulateDownload(btn, url) {
+            let p = 0; btn.classList.add('active-dl');
+            let i = setInterval(() => {
+                p++; btn.innerText = `DOWNLOADING ${p}%`;
+                if(p >= 100) { clearInterval(i); btn.innerText = "DOWNLOAD"; btn.classList.remove('active-dl'); window.open(url, '_blank'); }
+            }, 50);
         }
 
         function renderApps() {
@@ -308,25 +267,38 @@
                 h.innerHTML = ""; p.innerHTML = ""; if(v) v.innerHTML = "";
                 snap.forEach(c => {
                     let a = c.val();
-                    let card = `<div class="app-card"><div class="app-logo-box"><img src="${a.logo}"></div><div style="font-weight:900;">${a.name}</div><button class="download-btn" onclick="window.open('${a.file}','_blank')">Download</button></div>`;
+                    let card = `<div class="app-card"><div class="app-logo-box"><img src="${a.logo}"></div><div class="app-title">${a.name}</div><button class="download-btn" onclick="simulateDownload(this, '${a.file}')">DOWNLOAD</button></div>`;
                     if(a.target==='pc') p.innerHTML+=card; else if(a.target==='vip' && v) v.innerHTML+=card; else h.innerHTML+=card;
                 });
             });
         }
 
-        function loginWithGoogle() { const p = new firebase.auth.GoogleAuthProvider(); auth.signInWithPopup(p).then((res) => { const u = { name: res.user.displayName, img: res.user.photoURL }; localStorage.setItem("nt_session", JSON.stringify(u)); location.reload(); }); }
-        function confirmGuest() { const u = { name: "Guest", img: "https://cdn-icons-png.flaticon.com/512/149/149071.png" }; localStorage.setItem("nt_session", JSON.stringify(u)); location.reload(); }
-        function openLogoutModal() { document.getElementById('logout-modal').style.display = 'flex'; }
-        function confirmLogout() { localStorage.removeItem("nt_session"); location.reload(); }
-        function toggleTheme() { document.body.classList.toggle('light-theme'); }
-        function toggleSearch() { const s = document.getElementById('search-container'); s.style.display = (s.style.display === 'block' ? 'none' : 'block'); }
-        function closeModals() { document.querySelectorAll('.screen-overlay').forEach(m => m.style.display='none'); }
         function pressNum(v) { let f = document.getElementById('activationInput'); if(v==='del') f.value=f.value.slice(0,-1); else f.value+=v; }
-        function activateVIP() { if(document.getElementById('activationInput').value === "9860866915") { localStorage.setItem("nt_vip_king_v11", "true"); localStorage.setItem("nt_vip_time_v11", Date.now()); location.reload(); } else alert("Wrong Code!"); }
-        function updateTimer() { if(localStorage.getItem("nt_vip_king_v11") === "true") { let start = parseInt(localStorage.getItem("nt_vip_time_v11")); let rem = (30*60)-Math.floor((Date.now()-start)/1000); if(rem<=0) { localStorage.removeItem("nt_vip_king_v11"); location.reload(); } else { let m=Math.floor(rem/60), s=rem%60; if(document.getElementById('vip-timer')) document.getElementById('vip-timer').innerText=`TIME LEFT: ${m}:${s<10?'0'+s:s}`; } } }
-        function startPress() { pressTimer = setTimeout(() => { document.getElementById('admin-modal').style.display = 'flex'; database.ref('public_apps').once('value', (snap) => { const listDiv = document.getElementById('admin-app-list'); listDiv.innerHTML = ""; snap.forEach(c => { listDiv.innerHTML += `<div style="border-bottom:1px solid #334155; padding:5px; text-align:left;"><b>${c.val().name}</b><br><small style="color:#fbbf24">${c.key}</small></div>`; }); }); }, 3000); }
+        
+        function activateVIP() { 
+            if(document.getElementById('activationInput').value === "9860866915") { 
+                alert("VIP ACTIVATION SUCCESSFUL! Welcome to Premium NT Store.");
+                localStorage.setItem("nt_vip_king_v11", "true"); 
+                localStorage.setItem("nt_vip_time_v11", Date.now()); 
+                location.reload(); 
+            } else alert("Wrong Code"); 
+        }
+
+        function updateTimer() { if(localStorage.getItem("nt_vip_king_v11") === "true") { let start = parseInt(localStorage.getItem("nt_vip_time_v11")); let rem = (30*60)-Math.floor((Date.now()-start)/1000); if(rem<=0) { localStorage.removeItem("nt_vip_king_v11"); location.reload(); } else if(document.getElementById('vip-timer')) { let m=Math.floor(rem/60), s=rem%60; document.getElementById('vip-timer').innerText=`VIP Ends: ${m}:${s<10?'0'+s:s}`; } } }
+        function toggleSearch() { const s = document.getElementById('searchInput'); s.style.display = (s.style.display==='block'?'none':'block'); }
+        function filterApps(){ let q=document.getElementById('searchInput').value.toLowerCase(); document.querySelectorAll('.app-card').forEach(c=>{ c.style.display = c.innerText.toLowerCase().includes(q) ? "" : "none"; }); }
+        function closeModals() { document.querySelectorAll('.screen-overlay').forEach(m => m.style.display='none'); }
+
+        function startPress() {
+            pressTimer = setTimeout(() => {
+                document.getElementById('admin-modal').style.display = 'flex';
+                database.ref('public_apps').once('value', (snap) => {
+                    const l = document.getElementById('admin-app-list'); l.innerHTML = "";
+                    snap.forEach(c => { l.innerHTML += `<div style="border-bottom:1px solid var(--border); padding:10px;"><b>${c.val().name}</b><br><small>Key: ${c.key}</small></div>`; });
+                });
+            }, 3000);
+        }
         function endPress() { clearTimeout(pressTimer); }
-        function filterApps(){ let q=document.getElementById('searchInput').value.toLowerCase(); document.querySelectorAll('.app-card').forEach(c=>{c.style.display=c.innerText.toLowerCase().includes(q)?"":"none";}); }
     </script>
 </body>
 </html>
