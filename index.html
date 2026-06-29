@@ -53,7 +53,6 @@
         .google-btn { border-color: #4285F4; }
         .phone-btn { background: var(--primary); color: #fff; border: none; }
         
-        /* COUNTRY SELECTOR STYLE */
         .country-select { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--border); background: var(--bg); color: var(--text); font-weight: 600; margin-bottom: 10px; outline: none; }
         .auth-input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px; border: 2px solid var(--primary); background: var(--bg); color: var(--text); font-weight: 700; text-align: center; font-size: 1.1rem; }
         
@@ -66,41 +65,45 @@
         .logo-text { font-weight: 800; background: linear-gradient(90deg, #ff00ff, #0070f3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 0.95rem; margin: 0; }
         .container { max-width: 1200px; width: 92%; margin: 20px auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 18px; }
         .app-card { background: var(--card); border-radius: 24px; padding: 18px; text-align: center; border: 2px solid var(--primary); box-shadow: 0 4px 15px rgba(0, 97, 255, 0.1); animation: fadeIn 0.5s ease; transition: 0.3s; }
+        .app-card:active { transform: translateY(-12px) scale(1.03); }
         .app-logo-box { width: 80px; height: 80px; margin: 0 auto 12px; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
         .app-logo-box img { width: 100%; height: 100%; object-fit: cover; }
-        .app-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 12px; }
+        .app-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
         .download-btn { display: block; background: var(--primary); color: #fff; padding: 10px; border-radius: 12px; font-weight: 700; font-size: 0.8rem; border: none; width: 100%; cursor: pointer; }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: var(--nav); backdrop-filter: blur(20px); display: flex; justify-content: space-around; align-items: center; border-top: 2px solid var(--primary); z-index: 10000; }
-        .nav-item { text-decoration: none; color: #94a3b8; font-weight: 800; font-size: 0.65rem; text-align: center; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .nav-item { text-decoration: none; color: #94a3b8; font-weight: 800; font-size: 0.65rem; text-align: center; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 2; }
         .nav-item.active { color: #fff; }
-        .nav-item.active::before { content: ""; position: absolute; width: 50px; height: 50px; background: var(--primary); border-radius: 50%; z-index: -1; animation: navPop 0.3s forwards; }
+        .nav-item.active::before { content: ""; position: absolute; width: 50px; height: 50px; background: var(--primary); border-radius: 50%; z-index: -1; box-shadow: 0 0 15px var(--primary); animation: navPop 0.3s forwards; }
         .nav-icon { display: block; font-size: 1.4rem; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
-    <!-- LOADER (REVERTED) -->
+    <!-- LOADER -->
     <div id="loader-stage1">
         <div class="spinner"></div>
         <div class="rgb-text-loader">NT STORE LOADING...</div>
         <div id="load-count">0%</div>
     </div>
 
-    <!-- LOGIN SCREEN -->
+    <!-- LOGIN SCREEN (MULTI-PAGE) -->
     <div id="auth-screen">
         <div class="auth-card">
             
-            <!-- Step 1: Select Method -->
+            <!-- Step 1: Selection -->
             <div id="auth-step-1" class="auth-step active">
                 <div class="logo-box" style="display:inline-block; margin-bottom: 20px;"><h1 class="logo-text">NT STORE LOGIN</h1></div>
-                <h3>WELCOME TO PREMIUM</h3>
+                <h3 style="margin-top:0;">CHOOSE ONE TO PROCEED</h3>
+                
                 <button class="login-btn google-btn" onclick="loginWithGoogle()">
                     <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" width="22">
                     Sign in with Google
                 </button>
+
                 <button class="login-btn phone-btn" onclick="switchAuthStep(2)">
-                    <span>📱</span> Sign in with Phone Number
+                    <span style="font-size: 1.3rem;">📞</span>
+                    Sign in with Phone Number
                 </button>
             </div>
 
@@ -124,22 +127,22 @@
                 
                 <div id="recaptcha-container"></div>
                 <button class="download-btn" style="padding:15px;" onclick="sendOTP()">SEND OTP</button>
-                <span class="back-link" onclick="switchAuthStep(1)">← Back</span>
+                <span class="back-link" onclick="switchAuthStep(1)">← Back to Selection</span>
             </div>
 
-            <!-- Step 3: OTP -->
+            <!-- Step 3: OTP Verify -->
             <div id="auth-step-3" class="auth-step">
                 <span class="msg-icon">📩</span>
-                <h3>ENTER OTP</h3>
+                <h3>Verify OTP</h3>
+                <p style="font-size: 0.8rem; color: var(--subtext);">Enter the 6-digit code sent to your phone</p>
                 <input type="number" id="otp-code" class="auth-input" placeholder="0 0 0 0 0 0">
-                <button class="download-btn" style="padding:15px; background: #22c55e;" onclick="verifyOTP()">VERIFY LOGIN</button>
-                <span class="back-link" onclick="switchAuthStep(2)">← Edit Number</span>
+                <button class="download-btn" style="padding:15px; background: #22c55e;" onclick="verifyOTP()">VERIFY & LOGIN</button>
+                <span class="back-link" onclick="switchAuthStep(2)">← Change Number</span>
             </div>
-
         </div>
     </div>
     
-    <!-- MAIN APP CONTENT (DESIGN UNTOUCHED) -->
+    <!-- MAIN APP CONTENT -->
     <div id="main-app" style="display:none; padding-bottom: 100px;">
         <header>
             <div class="logo-box"><h1 class="logo-text">NT STORE</h1></div>
@@ -167,18 +170,24 @@
     </div>
 
     <script>
-        // CONFIG
-        const firebaseConfig = { 
-            apiKey: "AIzaSy...", 
-            databaseURL: "https://nt-base-default-rtdb.firebaseio.com/", 
-            authDomain: "nt-base.firebaseapp.com" 
+        // CONFIG UPDATED WITH YOUR KEYS
+        const firebaseConfig = {
+            apiKey: "AIzaSyA8j5woHekph8pHDeWBszrwP_3PypdfkhE",
+            authDomain: "nt-base.firebaseapp.com",
+            databaseURL: "https://nt-base-default-rtdb.firebaseio.com",
+            projectId: "nt-base",
+            storageBucket: "nt-base.firebasestorage.app",
+            messagingSenderId: "348200219253",
+            appId: "1:348200219253:web:e285a412904120b08f7e3c",
+            measurementId: "G-TN0X7VXJBL"
         };
+
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
         let confirmationResult = null;
 
-        // AUTH OBSERVER
+        // AUTH MONITOR
         auth.onAuthStateChanged(user => {
             if (user) {
                 document.getElementById('auth-screen').style.display = 'none';
@@ -196,11 +205,14 @@
             let loaderInt = setInterval(() => {
                 count += 2;
                 document.getElementById('load-count').innerText = count + "%";
-                if(count >= 100) { clearInterval(loaderInt); document.getElementById('loader-stage1').style.display = 'none'; }
+                if(count >= 100) {
+                    clearInterval(loaderInt);
+                    document.getElementById('loader-stage1').style.display = 'none';
+                }
             }, 30);
         };
 
-        // LOGIN FLOW
+        // LOGIN FLOW FUNCTIONS
         function switchAuthStep(step) {
             document.querySelectorAll('.auth-step').forEach(el => el.classList.remove('active'));
             document.getElementById('auth-step-' + step).classList.add('active');
@@ -234,10 +246,10 @@
 
         function verifyOTP() {
             const code = document.getElementById('otp-code').value;
-            confirmationResult.confirm(code).catch(err => alert("Invalid OTP!"));
+            confirmationResult.confirm(code).catch(err => alert("Wrong OTP!"));
         }
 
-        // NAVIGATION & RENDER (ORIGINAL LOGIC)
+        // NAVIGATION & RENDER (ORIGINAL)
         function tab(name) {
             ['home','pc','vip'].forEach(id => {
                 document.getElementById(id+'-sec').style.display = (id===name ? 'grid' : 'none');
@@ -245,7 +257,9 @@
             });
         }
 
-        function toggleTheme() { document.body.classList.toggle('amoled-theme'); }
+        function toggleTheme() {
+            document.body.classList.toggle('amoled-theme');
+        }
 
         function renderApps() {
             database.ref('public_apps').on('value', snap => {
