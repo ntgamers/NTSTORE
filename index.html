@@ -1,5 +1,4 @@
 --- START OF FILE text/html ---
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,32 +36,27 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; transition: all 0.3s ease; overflow-x: hidden; }
 
-        /* LOADER (ORIGINAL) */
+        /* LOADER STYLE (ORIGINAL) */
         #loader-stage1 { position: fixed; inset: 0; background: #020617; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100000; }
         .spinner { width: 50px; height: 50px; border: 5px solid rgba(56,189,248,0.1); border-top-color: #38bdf8; border-radius: 50%; animation: spin 1s linear infinite; }
         .rgb-text-loader { font-weight: 900; background: linear-gradient(90deg, #ff00ff, #ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0000ff); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rgbMove 2s linear infinite; font-size: 1.1rem; margin-top: 20px; }
         #load-count { color: #fff; font-size: 1.5rem; font-weight: 900; margin-top: 10px; }
 
-        /* --- LOGIN UI --- */
+        /* --- PROFESSIONAL GOOGLE LOGIN SCREEN --- */
         #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 90000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .auth-card { background: var(--card); border: 2px solid var(--primary); padding: 30px 20px; border-radius: 30px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .auth-step { display: none; animation: fadeIn 0.4s ease; }
-        .auth-step.active { display: block; }
-        
-        .login-btn { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 16px; border: 2px solid var(--border); background: var(--card); color: var(--text); font-weight: 800; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .google-btn { border-color: #4285F4; }
-        .phone-btn { background: var(--primary); color: #fff; border: none; }
-        
-        .country-select { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--border); background: var(--bg); color: var(--text); font-weight: 600; margin-bottom: 10px; outline: none; }
-        .auth-input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px; border: 2px solid var(--primary); background: var(--bg); color: var(--text); font-weight: 700; text-align: center; font-size: 1.1rem; }
-        
-        .msg-icon { font-size: 3rem; margin-bottom: 10px; display: block; }
-        .back-link { color: var(--primary); font-size: 0.8rem; font-weight: 700; cursor: pointer; text-decoration: underline; margin-top: 10px; display: inline-block; }
+        .auth-card { background: var(--card); border: 2px solid var(--primary); padding: 40px 25px; border-radius: 28px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 4px 20px rgba(0, 97, 255, 0.15); animation: fadeIn 0.5s ease; }
+        .google-btn { width: 100%; padding: 14px; margin-top: 20px; border-radius: 16px; border: 1px solid #ddd; background: #fff; color: #000; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 1rem; transition: 0.3s; }
+        .google-btn:active { transform: scale(0.96); background: #f1f1f1; }
+        .auth-card p { font-size: 0.85rem; color: var(--subtext); margin-top: 15px; }
 
-        /* --- ORIGINAL APP STYLES --- */
+        /* --- ORIGINAL HEADER & APP CARDS --- */
         header { position: sticky; top: 0; z-index: 20000; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; background: var(--nav); backdrop-filter: blur(20px); border-bottom: 2px solid var(--primary); }
         .logo-box { background: #111827; padding: 4px 12px; border-radius: 10px; border: 1px solid #1f2937; }
         .logo-text { font-weight: 800; background: linear-gradient(90deg, #ff00ff, #0070f3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 0.95rem; margin: 0; }
+        .header-controls { display: flex; gap: 8px; }
+        .icon-btn { background: var(--card); color: var(--text); border: 2px solid var(--primary); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; overflow: hidden; }
+        .icon-btn img { width: 100%; height: 100%; object-fit: cover; }
+
         .container { max-width: 1200px; width: 92%; margin: 20px auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 18px; }
         .app-card { background: var(--card); border-radius: 24px; padding: 18px; text-align: center; border: 2px solid var(--primary); box-shadow: 0 4px 15px rgba(0, 97, 255, 0.1); animation: fadeIn 0.5s ease; transition: 0.3s; }
         .app-card:active { transform: translateY(-12px) scale(1.03); }
@@ -71,95 +65,60 @@
         .app-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
         .download-btn { display: block; background: var(--primary); color: #fff; padding: 10px; border-radius: 12px; font-weight: 700; font-size: 0.8rem; border: none; width: 100%; cursor: pointer; }
 
+        /* ORIGINAL BOTTOM NAV */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: var(--nav); backdrop-filter: blur(20px); display: flex; justify-content: space-around; align-items: center; border-top: 2px solid var(--primary); z-index: 10000; }
         .nav-item { text-decoration: none; color: #94a3b8; font-weight: 800; font-size: 0.65rem; text-align: center; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 2; }
         .nav-item.active { color: #fff; }
         .nav-item.active::before { content: ""; position: absolute; width: 50px; height: 50px; background: var(--primary); border-radius: 50%; z-index: -1; box-shadow: 0 0 15px var(--primary); animation: navPop 0.3s forwards; }
         .nav-icon { display: block; font-size: 1.4rem; margin-bottom: 2px; }
+
+        .search-input { width: 92%; margin: 10px auto; padding: 12px 20px; border-radius: 16px; border: 2px solid var(--primary); background: var(--card); color: var(--text); display: none; }
     </style>
 </head>
 <body>
 
-    <!-- LOADER -->
+    <!-- LOADER (ORIGINAL) -->
     <div id="loader-stage1">
         <div class="spinner"></div>
         <div class="rgb-text-loader">NT STORE LOADING...</div>
         <div id="load-count">0%</div>
     </div>
 
-    <!-- LOGIN SCREEN (MULTI-PAGE) -->
+    <!-- PROFESSIONAL LOGIN SCREEN -->
     <div id="auth-screen">
         <div class="auth-card">
+            <div class="logo-box" style="display:inline-block; margin-bottom:10px;"><h1 class="logo-text">NT STORE</h1></div>
+            <h2 style="margin: 10px 0; font-size: 1.2rem;">Welcome Back</h2>
+            <p>Sign in with Google to access Premium Apps and PC tools.</p>
             
-            <!-- Step 1: Selection -->
-            <div id="auth-step-1" class="auth-step active">
-                <div class="logo-box" style="display:inline-block; margin-bottom: 20px;"><h1 class="logo-text">NT STORE LOGIN</h1></div>
-                <h3 style="margin-top:0;">CHOOSE ONE TO PROCEED</h3>
-                
-                <button class="login-btn google-btn" onclick="loginWithGoogle()">
-                    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" width="22">
-                    Sign in with Google
-                </button>
+            <button class="google-btn" onclick="loginWithGoogle()">
+                <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" width="22"> 
+                Continue with Google
+            </button>
 
-                <button class="login-btn phone-btn" onclick="switchAuthStep(2)">
-                    <span style="font-size: 1.3rem;">📞</span>
-                    Sign in with Phone Number
-                </button>
-            </div>
-
-            <!-- Step 2: Country & Phone -->
-            <div id="auth-step-2" class="auth-step">
-                <span class="msg-icon">💬</span>
-                <h3>PHONE VERIFICATION</h3>
-                <p style="font-size:0.8rem; color:var(--subtext); margin-bottom:15px;">Select country and enter number</p>
-                
-                <select id="country-code" class="country-select" onchange="updateDialCode()">
-                    <option value="">Select Country</option>
-                    <option value="+91">🇮🇳 India (+91)</option>
-                    <option value="+1">🇺🇸 USA (+1)</option>
-                    <option value="+44">🇬🇧 UK (+44)</option>
-                    <option value="+971">🇦🇪 UAE (+971)</option>
-                    <option value="+92">🇵🇰 Pakistan (+92)</option>
-                    <option value="+880">🇧🇩 Bangladesh (+880)</option>
-                </select>
-
-                <input type="tel" id="phone-number" class="auth-input" placeholder="Phone Number">
-                
-                <div id="recaptcha-container"></div>
-                <button class="download-btn" style="padding:15px;" onclick="sendOTP()">SEND OTP</button>
-                <span class="back-link" onclick="switchAuthStep(1)">← Back to Selection</span>
-            </div>
-
-            <!-- Step 3: OTP Verify -->
-            <div id="auth-step-3" class="auth-step">
-                <span class="msg-icon">📩</span>
-                <h3>Verify OTP</h3>
-                <p style="font-size: 0.8rem; color: var(--subtext);">Enter the 6-digit code sent to your phone</p>
-                <input type="number" id="otp-code" class="auth-input" placeholder="0 0 0 0 0 0">
-                <button class="download-btn" style="padding:15px; background: #22c55e;" onclick="verifyOTP()">VERIFY & LOGIN</button>
-                <span class="back-link" onclick="switchAuthStep(2)">← Change Number</span>
-            </div>
+            <p style="font-size: 0.7rem; margin-top: 30px; opacity: 0.6;">By continuing, you agree to NT Store's Terms of Service.</p>
         </div>
     </div>
     
-    <!-- MAIN APP CONTENT -->
     <div id="main-app" style="display:none; padding-bottom: 100px;">
         <header>
             <div class="logo-box"><h1 class="logo-text">NT STORE</h1></div>
             <div class="header-controls">
                 <button class="icon-btn" onclick="toggleTheme()">☀️</button>
-                <button class="icon-btn" onclick="firebase.auth().signOut()">🚪</button>
+                <button class="icon-btn" onclick="toggleSearch()">🔍</button>
+                <!-- Profile/Logout Button -->
+                <button class="icon-btn" id="user-profile-btn" onclick="firebase.auth().signOut()" title="Logout">
+                    👤
+                </button>
             </div>
         </header>
+
+        <input type="text" class="search-input" id="searchInput" placeholder="Search apps..." onkeyup="filterApps()">
 
         <div id="home-sec" class="container"></div>
         <div id="pc-sec" class="container" style="display:none;"></div>
         <div id="vip-sec" class="container" style="display:none;">
-             <div id="vip-locked" style="width:100%; text-align: center;">
-                <h2 class="logo-text" style="font-size: 1.5rem;">VIP PREMIUM</h2>
-                <button class="download-btn" style="max-width: 200px; margin: 20px auto;" onclick="window.location.href='upi://pay?pa=naitikthakare12345@oksbi&pn=NTSTORE&am=29&cu=INR'">BUY NOW ₹29</button>
-             </div>
-             <div id="vip-list" class="container"></div>
+            <div id="vip-list" class="container" style="width:100%"></div>
         </div>
 
         <nav class="bottom-nav">
@@ -170,7 +129,7 @@
     </div>
 
     <script>
-        // CONFIG UPDATED WITH YOUR KEYS
+        // CONFIG (UPDATED)
         const firebaseConfig = {
             apiKey: "AIzaSyA8j5woHekph8pHDeWBszrwP_3PypdfkhE",
             authDomain: "nt-base.firebaseapp.com",
@@ -185,13 +144,16 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
-        let confirmationResult = null;
 
-        // AUTH MONITOR
+        // AUTH STATE OBSERVER
         auth.onAuthStateChanged(user => {
             if (user) {
                 document.getElementById('auth-screen').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
+                // Show Google Profile Pic in Header
+                if(user.photoURL) {
+                    document.getElementById('user-profile-btn').innerHTML = `<img src="${user.photoURL}">`;
+                }
                 renderApps();
             } else {
                 document.getElementById('main-app').style.display = 'none';
@@ -199,66 +161,36 @@
             }
         });
 
-        // LOADER
+        // LOADER (ORIGINAL)
         window.onload = () => {
             let count = 0;
             let loaderInt = setInterval(() => {
                 count += 2;
                 document.getElementById('load-count').innerText = count + "%";
-                if(count >= 100) {
-                    clearInterval(loaderInt);
-                    document.getElementById('loader-stage1').style.display = 'none';
-                }
+                if(count >= 100) { clearInterval(loaderInt); document.getElementById('loader-stage1').style.display = 'none'; }
             }, 30);
         };
 
-        // LOGIN FLOW FUNCTIONS
-        function switchAuthStep(step) {
-            document.querySelectorAll('.auth-step').forEach(el => el.classList.remove('active'));
-            document.getElementById('auth-step-' + step).classList.add('active');
-            if(step === 2 && !window.recaptchaVerifier) {
-                window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { 'size': 'invisible' });
-            }
-        }
-
-        function updateDialCode() {
-            const code = document.getElementById('country-code').value;
-            const phoneInput = document.getElementById('phone-number');
-            phoneInput.value = code + " ";
-            phoneInput.focus();
-        }
-
+        // GOOGLE LOGIN FUNCTION
         function loginWithGoogle() {
             const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider).catch(err => alert(err.message));
+            auth.signInWithPopup(provider).catch(e => alert("Error: " + e.message));
         }
 
-        function sendOTP() {
-            const phone = document.getElementById('phone-number').value.trim();
-            if(!phone.startsWith('+')) return alert("Please select a country or add code manually (+91)");
-            
-            auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
-                .then(result => {
-                    confirmationResult = result;
-                    switchAuthStep(3);
-                }).catch(err => alert(err.message));
-        }
-
-        function verifyOTP() {
-            const code = document.getElementById('otp-code').value;
-            confirmationResult.confirm(code).catch(err => alert("Wrong OTP!"));
-        }
-
-        // NAVIGATION & RENDER (ORIGINAL)
+        // APP FUNCTIONS (ORIGINAL)
         function tab(name) {
             ['home','pc','vip'].forEach(id => {
                 document.getElementById(id+'-sec').style.display = (id===name ? 'grid' : 'none');
                 document.getElementById('nav-'+id).classList.toggle('active', id===name);
             });
         }
-
-        function toggleTheme() {
-            document.body.classList.toggle('amoled-theme');
+        function toggleTheme() { document.body.classList.toggle('amoled-theme'); }
+        function toggleSearch() { let s = document.getElementById('searchInput'); s.style.display = (s.style.display==='block'?'none':'block'); }
+        function filterApps() { 
+            let q = document.getElementById('searchInput').value.toLowerCase(); 
+            document.querySelectorAll('.app-card').forEach(c => { 
+                c.style.display = c.innerText.toLowerCase().includes(q) ? "" : "none"; 
+            }); 
         }
 
         function renderApps() {
