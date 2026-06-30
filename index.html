@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NT STORE PRO</title>
 
-    <!-- FIREBASE SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -13,13 +12,11 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-        /* ANIMATIONS */
         @keyframes rgbMove { to { background-position: 200% center; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes navPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        /* THEME SYSTEM */
         :root { 
             --bg: #f8f9fa; --card: #ffffff; --text: #1a1c1e; 
             --primary: #0061ff; --nav: rgba(255, 255, 255, 0.9); 
@@ -33,19 +30,7 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; transition: all 0.3s ease; overflow-x: hidden; }
-
-        /* LOADERS */
-        #loader-stage1, #login-delay-screen { position: fixed; inset: 0; background: #020617; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100000; }
-        #login-delay-screen { display: none; z-index: 100001; }
-        .spinner { width: 50px; height: 50px; border: 5px solid rgba(56,189,248,0.1); border-top-color: #38bdf8; border-radius: 50%; animation: spin 1s linear infinite; }
-        .rgb-text-loader { font-weight: 900; background: linear-gradient(90deg, #ff00ff, #ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0000ff); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rgbMove 2s linear infinite; font-size: 1.1rem; margin-top: 20px; }
-        #load-count, #delay-timer { color: #fff; font-size: 1.5rem; font-weight: 900; margin-top: 10px; }
-
-        /* LOGIN SCREEN */
-        #login-screen { position: fixed; inset: 0; background: var(--bg); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; }
-        .login-card { background: var(--card); padding: 30px; border-radius: 28px; border: 2px solid var(--primary); text-align: center; width: 90%; max-width: 350px; }
-        .google-btn { background: #fff; color: #000; border: 1px solid #ddd; padding: 12px 20px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; cursor: pointer; margin-top: 20px; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; transition: 0.3s; overflow-x: hidden; }
 
         /* HEADER */
         header { position: sticky; top: 0; z-index: 20000; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; background: var(--nav); backdrop-filter: blur(20px); border-bottom: 2px solid var(--primary); }
@@ -54,29 +39,49 @@
         .header-controls { display: flex; gap: 8px; }
         .icon-btn { background: var(--card); color: var(--text); border: 2px solid var(--primary); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; }
 
+        /* ANNOUNCEMENT BAR */
+        .news-bar { background: var(--primary); color: #fff; height: 30px; display: flex; align-items: center; overflow: hidden; font-size: 0.75rem; font-weight: 700; }
+        .news-text { white-space: nowrap; animation: marquee 15s linear infinite; }
+
+        /* LOADERS */
+        #loader-stage1, #login-delay-screen { position: fixed; inset: 0; background: #020617; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100000; }
+        #login-delay-screen { display: none; z-index: 100001; }
+        .spinner { width: 50px; height: 50px; border: 5px solid var(--primary); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; }
+        .rgb-text-loader { font-weight: 900; background: linear-gradient(90deg, #ff00ff, #0070f3, #00ff00); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rgbMove 2s linear infinite; font-size: 1.1rem; margin-top: 20px; }
+
+        /* CATEGORIES */
+        .cat-box { display: flex; gap: 10px; overflow-x: auto; padding: 10px 16px; scrollbar-width: none; }
+        .cat-box::-webkit-scrollbar { display: none; }
+        .cat-btn { background: var(--card); color: var(--subtext); padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); font-size: 0.75rem; font-weight: 700; white-space: nowrap; cursor: pointer; }
+        .cat-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
         /* APP CARDS */
-        .container { max-width: 1200px; width: 92%; margin: 20px auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 18px; }
-        .app-card { background: var(--card); border-radius: 24px; padding: 18px; text-align: center; border: 2px solid var(--primary); box-shadow: 0 4px 15px rgba(0, 97, 255, 0.1); animation: fadeIn 0.5s ease; transition: 0.3s; }
-        .app-logo-box { width: 80px; height: 80px; margin: 0 auto 12px; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
+        .container { max-width: 1200px; width: 92%; margin: 10px auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 18px; }
+        .app-card { background: var(--card); border-radius: 24px; padding: 15px; text-align: center; border: 2px solid var(--primary); animation: fadeIn 0.5s ease; position: relative; }
+        .app-logo-box { width: 70px; height: 70px; margin: 0 auto 10px; border-radius: 18px; overflow: hidden; border: 1px solid var(--border); }
         .app-logo-box img { width: 100%; height: 100%; object-fit: cover; }
-        .app-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-        .download-btn { display: block; background: var(--primary); color: #fff; padding: 10px; border-radius: 12px; font-weight: 700; font-size: 0.8rem; border: none; width: 100%; cursor: pointer; }
-        .download-btn.active-dl { background: #22c55e; pointer-events: none; }
+        .app-title { font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .like-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.05); border: none; border-radius: 50%; padding: 5px; cursor: pointer; font-size: 0.8rem; }
+        
+        .download-btn { background: var(--primary); color: #fff; padding: 10px; border-radius: 12px; font-weight: 700; font-size: 0.75rem; border: none; width: 100%; cursor: pointer; }
+        
+        /* LOGIN SCREEN */
+        #login-screen { position: fixed; inset: 0; background: var(--bg); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; }
+        .login-card { background: var(--card); padding: 30px; border-radius: 28px; border: 2px solid var(--primary); text-align: center; width: 90%; max-width: 350px; }
+        .google-btn { background: #fff; color: #000; border: 1px solid #ddd; padding: 12px 20px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; cursor: pointer; margin-top: 20px; }
 
         /* BOTTOM NAV */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: var(--nav); backdrop-filter: blur(20px); display: flex; justify-content: space-around; align-items: center; border-top: 2px solid var(--primary); z-index: 10000; }
-        .nav-item { text-decoration: none; color: #94a3b8; font-weight: 800; font-size: 0.65rem; text-align: center; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 2; }
+        .nav-item { text-decoration: none; color: #94a3b8; font-weight: 800; font-size: 0.65rem; text-align: center; flex: 1; display: flex; flex-direction: column; align-items: center; }
         .nav-item.active { color: #fff; }
         .nav-item.active::before { content: ""; position: absolute; width: 50px; height: 50px; background: var(--primary); border-radius: 50%; z-index: -1; animation: navPop 0.3s forwards; }
-        .nav-icon { display: block; font-size: 1.4rem; margin-bottom: 2px; }
 
-        /* MODALS & INPUTS */
-        .screen-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 30000; }
-        .modal-box { background: var(--card); padding: 25px; border-radius: 28px; width: 90%; max-width: 380px; text-align: center; border: 2px solid var(--primary); }
-        .modal-box input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-weight: 600; text-align: center; }
-        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .key-btn { background: var(--card); color: var(--text); border: 2px solid var(--primary); padding: 15px; border-radius: 14px; font-weight: 700; transition: 0.2s; }
-        .search-input { width: 92%; margin: 10px auto; padding: 12px 20px; border-radius: 16px; border: 2px solid var(--primary); background: var(--card); color: var(--text); display: none; }
+        /* MODALS */
+        .screen-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 30000; padding: 20px; }
+        .modal-box { background: var(--card); padding: 25px; border-radius: 28px; width: 100%; max-width: 380px; text-align: center; border: 2px solid var(--primary); overflow-y: auto; max-height: 90vh; }
+        .modal-box input, .modal-box textarea, .modal-box select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: inherit; }
+        
+        .search-input { width: 92%; margin: 10px auto; padding: 12px 20px; border-radius: 16px; border: 2px solid var(--primary); background: var(--card); display: none; }
     </style>
 </head>
 <body>
@@ -88,110 +93,134 @@
         <div id="load-count">0%</div>
     </div>
 
-    <!-- LOGIN DELAY SCREEN (5 SEC) -->
+    <!-- LOGIN DELAY -->
     <div id="login-delay-screen">
         <div class="spinner"></div>
-        <div class="rgb-text-loader">LOGGING IN... PLEASE WAIT</div>
+        <div class="rgb-text-loader">CONNECTING TO NT SERVER...</div>
         <div id="delay-timer">5s</div>
     </div>
 
-    <!-- LOGIN SECTION -->
+    <!-- LOGIN SCREEN -->
     <div id="login-screen">
         <div class="login-card">
             <h2 class="logo-text" style="font-size: 1.8rem;">NT STORE</h2>
-            <p style="color: var(--subtext); font-size: 0.9rem;">Sign in with Google to continue</p>
+            <p style="color: var(--subtext);">Access premium android applications</p>
             <button class="google-btn" onclick="googleLogin()">
-                <!-- FIXED GOOGLE SVG - NO MORE CRASHING -->
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 6.13l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                </svg>
-                Continue with Google
+                <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 6.13l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                Sign in with Google
             </button>
         </div>
     </div>
-    
+
     <div id="main-app" style="display:none; padding-bottom: 100px;">
         <header>
             <div class="logo-box"><h1 class="logo-text">NT STORE</h1></div>
             <div class="header-controls">
+                <button class="icon-btn" onclick="openReportModal()">⚠️</button>
                 <button class="icon-btn" onclick="toggleTheme()">☀️</button>
                 <button class="icon-btn" onclick="toggleSearch()">🔍</button>
             </div>
         </header>
 
-        <input type="text" class="search-input" id="searchInput" placeholder="Search apps..." onkeyup="filterApps()">
-
-        <div id="home-sec" class="container"></div>
-        <div id="pc-sec" class="container" style="display:none;"></div>
-
-        <!-- VIP SECTION -->
-        <div id="vip-sec" class="container" style="display:none;">
-            <div id="vip-locked" style="width:100%;">
-                <h2 style="text-align:center;">VIP PREMIUM</h2>
-                <div class="app-card" style="max-width: 350px; margin: 0 auto 20px; border-color: #fbbf24;">
-                    <div style="color:#fbbf24; font-weight:800; font-size:1.3rem;">VIP PREMIUM</div>
-                    <div style="font-size: 2.2rem; margin:10px 0; font-weight: 900;">₹29</div>
-                    <button class="download-btn" style="background:#fbbf24; color:#000;" onclick="handlePayment()">BUY NOW</button>
-                </div>
-                <div style="background:var(--card); padding:20px; border-radius:24px; max-width:350px; margin:0 auto; border:2px solid var(--primary);">
-                    <input type="text" id="activationInput" readonly placeholder="ENTER CODE">
-                    <div class="keypad">
-                        <button class="key-btn" onclick="pressNum('1')">1</button><button class="key-btn" onclick="pressNum('2')">2</button><button class="key-btn" onclick="pressNum('3')">3</button>
-                        <button class="key-btn" onclick="pressNum('4')">4</button><button class="key-btn" onclick="pressNum('5')">5</button><button class="key-btn" onclick="pressNum('6')">6</button>
-                        <button class="key-btn" onclick="pressNum('7')">7</button><button class="key-btn" onclick="pressNum('8')">8</button><button class="key-btn" onclick="pressNum('9')">9</button>
-                        <button class="key-btn" style="border-color:#ef4444; color:#ef4444" onclick="pressNum('del')">⌫</button><button class="key-btn" onclick="pressNum('0')">0</button>
-                        <button class="key-btn" style="border-color:#22c55e; color:#22c55e" onclick="activateVIP()">OK</button>
-                    </div>
-                </div>
-            </div>
-            <div id="vip-unlocked" style="display:none; text-align:center; width:100%;">
-                <h2 class="logo-text" style="font-size: 1.5rem;">VIP ACTIVE</h2>
-                <div id="vip-timer" style="color:#fbbf24; font-weight:800; text-align: center; margin-bottom: 20px;"></div>
-                <div id="vip-list" class="container"></div>
-            </div>
+        <div class="news-bar">
+            <div class="news-text" id="announcement">Welcome to NT STORE PRO! New VIP apps added. Don't forget to join our Discord.</div>
         </div>
 
-        <!-- ABOUT SECTION -->
+        <input type="text" class="search-input" id="searchInput" placeholder="Search for apps..." onkeyup="filterApps()">
+
+        <div class="cat-box" id="categoryBox">
+            <div class="cat-btn active" onclick="filterCat('all', this)">All</div>
+            <div class="cat-btn" onclick="filterCat('Games', this)">Games</div>
+            <div class="cat-btn" onclick="filterCat('Mods', this)">Mods</div>
+            <div class="cat-btn" onclick="filterCat('Tools', this)">Tools</div>
+            <div class="cat-btn" onclick="filterCat('PC', this)">PC Apps</div>
+        </div>
+
+        <!-- SECTIONS -->
+        <div id="home-sec" class="container"></div>
+        <div id="pc-sec" class="container" style="display:none;"></div>
+        <div id="vip-sec" class="container" style="display:none;">
+            <div id="vip-locked" style="width:100%; text-align:center;">
+                <div class="app-card" style="max-width:320px; margin:20px auto; border-color:#fbbf24;">
+                    <h2 style="color:#fbbf24">💎 VIP AREA</h2>
+                    <p>Get exclusive apps for just ₹29</p>
+                    <button class="download-btn" style="background:#fbbf24; color:#000" onclick="handlePayment()">BUY NOW</button>
+                </div>
+                <input type="text" id="activationInput" placeholder="Enter Code" style="padding:10px; border-radius:10px; border:2px solid var(--primary); text-align:center;">
+                <button class="download-btn" style="width:100px; margin-top:10px;" onclick="activateVIP()">OK</button>
+            </div>
+            <div id="vip-unlocked" style="display:none; width:100%;" class="container"></div>
+        </div>
+
         <div id="about-sec" class="container" style="display:none; grid-template-columns: 1fr;">
-            <div class="app-card" style="padding:40px 20px;">
-                <img id="profile-img" src="" style="width:90px; height:90px; border-radius:50%; margin-bottom:15px; border:3px solid var(--primary); object-fit: cover;">
-                <h2 id="profile-name" class="logo-text">Loading...</h2>
-                <button class="download-btn" style="background:#ff0000; margin-top:10px;" onclick="window.open('https://youtube.com/@nt.gamerr?si=xtgXfDxc2a1ZFsOY')">YouTube</button>
+            <div class="app-card" style="padding:30px;">
+                <img id="profile-img" src="" style="width:80px; height:80px; border-radius:50%; border:3px solid var(--primary);">
+                <h2 id="profile-name" class="logo-text">NT User</h2>
+                <button class="download-btn" style="background:#ff0000; margin-top:10px;" onclick="window.open('https://youtube.com/@nt.gamerr')">YouTube</button>
                 <button class="download-btn" style="background:#5865f2; margin-top:10px;" onclick="window.open('https://discord.gg/D6MYrhuXv')">Discord</button>
+                <button class="download-btn" style="background:#22c55e; margin-top:10px;" onclick="openRequestModal()">Request an App</button>
                 <button class="download-btn" style="background:#64748b; margin-top:20px;" onclick="logout()">Logout Account</button>
             </div>
         </div>
 
         <nav class="bottom-nav">
-            <a href="javascript:void(0)" class="nav-item active" id="nav-home" onclick="tab('home')"><span class="nav-icon">🏠</span>HOME</a>
-            <a href="javascript:void(0)" class="nav-item" id="nav-pc" onclick="tab('pc')"><span class="nav-icon">💻</span>PC</a>
-            <a href="javascript:void(0)" class="nav-item" onclick="handlePlusClick()"><span class="nav-icon" style="color:var(--primary); font-size:2.8rem; margin-top:-10px;">⊕</span></a>
-            <a href="javascript:void(0)" class="nav-item" id="nav-vip" onclick="tab('vip')"><span class="nav-icon">💎</span>VIP</a>
-            <a href="javascript:void(0)" class="nav-item" id="nav-about" onclick="tab('about')"><span class="nav-icon">👤</span>ABOUT</a>
+            <a href="javascript:void(0)" class="nav-item active" id="nav-home" onclick="tab('home')">🏠<br>HOME</a>
+            <a href="javascript:void(0)" class="nav-item" id="nav-pc" onclick="tab('pc')">💻<br>PC</a>
+            <a href="javascript:void(0)" class="nav-item" onclick="handlePlusClick()"><span style="font-size:2.5rem; color:var(--primary)">⊕</span></a>
+            <a href="javascript:void(0)" class="nav-item" id="nav-vip" onclick="tab('vip')">💎<br>VIP</a>
+            <a href="javascript:void(0)" class="nav-item" id="nav-about" onclick="tab('about')">👤<br>ABOUT</a>
         </nav>
     </div>
 
-    <!-- UPLOAD MODAL -->
+    <!-- MODALS -->
+    <div id="app-detail-modal" class="screen-overlay" onclick="closeModals()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <img id="det-logo" src="" style="width:80px; height:80px; border-radius:20px;">
+            <h2 id="det-title" class="logo-text"></h2>
+            <div id="det-cat" style="font-size:0.7rem; opacity:0.7; margin-bottom:10px;"></div>
+            <img id="det-ss" src="" style="width:100%; border-radius:12px; margin:10px 0; display:none;">
+            <p id="det-desc" style="font-size:0.8rem; text-align:left; color:var(--subtext);"></p>
+            <button id="det-dl-btn" class="download-btn">DOWNLOAD NOW</button>
+        </div>
+    </div>
+
+    <div id="report-modal" class="screen-overlay">
+        <div class="modal-box">
+            <h2 class="logo-text">REPORT LINK</h2>
+            <input type="text" id="rep-app" placeholder="App Name">
+            <textarea id="rep-msg" placeholder="What is the problem?"></textarea>
+            <button class="download-btn" onclick="submitReport()">SUBMIT REPORT</button>
+            <button class="download-btn" style="background:transparent; color:var(--subtext);" onclick="closeModals()">CANCEL</button>
+        </div>
+    </div>
+
+    <div id="request-modal" class="screen-overlay">
+        <div class="modal-box">
+            <h2 class="logo-text">REQUEST APP</h2>
+            <input type="text" id="req-name" placeholder="App Name You Need">
+            <button class="download-btn" onclick="submitRequest()">SEND REQUEST</button>
+            <button class="download-btn" style="background:transparent; color:var(--subtext);" onclick="closeModals()">CANCEL</button>
+        </div>
+    </div>
+
     <div id="upload-modal" class="screen-overlay">
-        <div class="modal-box" id="upload-step-1">
+        <div class="modal-box">
             <h2 class="logo-text">PUBLISH APP</h2>
             <input type="text" id="up-name" placeholder="App Name">
             <input type="text" id="up-link" placeholder="Download Link">
-            <input type="file" id="up-logo" accept="image/*" style="display:none" onchange="previewLogo()">
-            <button class="download-btn" style="background:var(--bg); color:var(--text); border:1px solid var(--border);" onclick="document.getElementById('up-logo').click()">SELECT PHOTO</button>
-            <div id="up-logo-status" style="font-size:0.8rem; color:#22c55e; margin-top:5px; display:none;">Photo Selected!</div>
-            <button class="download-btn" style="margin-top:15px; border: 2px solid var(--primary);" onclick="nextUploadStep()">NEXT</button>
+            <select id="up-cat">
+                <option value="Games">Games</option>
+                <option value="Mods">Mods</option>
+                <option value="Tools">Tools</option>
+                <option value="PC">PC Apps</option>
+                <option value="VIP">VIP Exclusive</option>
+            </select>
+            <textarea id="up-desc" placeholder="App Description..."></textarea>
+            <p style="font-size:0.7rem;">Logo & Screenshot Link (Direct URL)</p>
+            <input type="text" id="up-logo-url" placeholder="Logo Link">
+            <input type="text" id="up-ss-url" placeholder="Screenshot Link (Optional)">
+            <button class="download-btn" onclick="finishUpload()">UPLOAD NOW</button>
             <button class="download-btn" style="background:transparent; color:var(--subtext);" onclick="closeModals()">CANCEL</button>
-        </div>
-        <div class="modal-box" id="upload-step-2" style="display:none;">
-            <h2 class="logo-text">SELECT SECTION</h2>
-            <button class="download-btn" style="margin-bottom:10px;" onclick="finishUpload('home')">HOME SECTION</button>
-            <button class="download-btn" style="margin-bottom:10px;" onclick="finishUpload('pc')">PC SECTION</button>
-            <button class="download-btn" style="margin-bottom:10px;" onclick="finishUpload('vip')">VIP SECTION</button>
-            <button class="download-btn" style="background:transparent; color:var(--primary); margin-top:10px; border:1px dashed var(--primary);" onclick="prevUploadStep()">BACK</button>
         </div>
     </div>
 
@@ -209,44 +238,22 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const auth = firebase.auth();
-        let amoled = false, tempLogo = "";
 
-        // FIRST STAGE LOADER
         window.onload = () => {
             let count = 0;
             let loaderInt = setInterval(() => {
-                count += 2;
-                if(count > 100) count = 100;
+                count += 5;
                 document.getElementById('load-count').innerText = count + "%";
-                if(count >= 100) {
-                    clearInterval(loaderInt);
-                    document.getElementById('loader-stage1').style.display = 'none';
-                    checkAuthState();
-                }
-            }, 25);
+                if(count >= 100) { clearInterval(loaderInt); document.getElementById('loader-stage1').style.display = 'none'; checkAuthState(); }
+            }, 50);
         };
 
         function checkAuthState() {
             auth.onAuthStateChanged(user => {
                 if (user) {
-                    // Update User Profile Info
-                    document.getElementById('profile-img').src = user.photoURL || 'https://via.placeholder.com/90';
-                    document.getElementById('profile-name').innerText = user.displayName || "NT User";
-
-                    // Check if delay screen should be shown
-                    if (!sessionStorage.getItem('nt_logged_now')) {
-                        showLoginDelay();
-                    } else {
-                        document.getElementById('login-screen').style.display = 'none';
-                        document.getElementById('main-app').style.display = 'block';
-                        renderApps();
-                    }
-                    
-                    if(localStorage.getItem("nt_vip_king_v11") === "true") {
-                        document.getElementById('vip-locked').style.display = 'none';
-                        document.getElementById('vip-unlocked').style.display = 'block';
-                    }
-                    setInterval(updateTimer, 1000);
+                    document.getElementById('profile-img').src = user.photoURL;
+                    document.getElementById('profile-name').innerText = user.displayName;
+                    if (!sessionStorage.getItem('nt_v2')) showDelay(); else showApp();
                 } else {
                     document.getElementById('main-app').style.display = 'none';
                     document.getElementById('login-screen').style.display = 'flex';
@@ -254,112 +261,138 @@
             });
         }
 
-        function showLoginDelay() {
+        function showDelay() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('login-delay-screen').style.display = 'flex';
-            let timeLeft = 5;
-            let delayTimer = setInterval(() => {
-                timeLeft--;
-                document.getElementById('delay-timer').innerText = timeLeft + "s";
-                if(timeLeft <= 0) {
-                    clearInterval(delayTimer);
-                    sessionStorage.setItem('nt_logged_now', 'true');
-                    document.getElementById('login-delay-screen').style.display = 'none';
-                    document.getElementById('main-app').style.display = 'block';
-                    renderApps();
-                }
+            let t = 5;
+            let it = setInterval(() => {
+                t--; document.getElementById('delay-timer').innerText = t+"s";
+                if(t<=0){ clearInterval(it); sessionStorage.setItem('nt_v2','t'); showApp(); }
             }, 1000);
         }
 
-        function googleLogin() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider).catch(error => alert(error.message));
-        }
-
-        function logout() {
-            if(confirm("Are you sure you want to logout?")) {
-                sessionStorage.removeItem('nt_logged_now');
-                auth.signOut().then(() => location.reload());
+        function showApp() {
+            document.getElementById('login-delay-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            renderApps();
+            if(localStorage.getItem("nt_vip_king_v11") === "true") {
+                document.getElementById('vip-locked').style.display = 'none';
+                document.getElementById('vip-unlocked').style.display = 'grid';
             }
         }
 
-        function handlePayment() { window.location.href = `upi://pay?pa=naitikthakare12345@oksbi&pn=NTSTORE&am=29&cu=INR`; }
-        function toggleTheme() { amoled = !amoled; document.body.className = amoled ? "amoled-theme" : ""; }
-
-        function tab(name) {
-            window.scrollTo(0,0);
-            ['home','pc','vip','about'].forEach(id => {
-                document.getElementById(id+'-sec').style.display = (id===name ? 'grid' : 'none');
-                document.getElementById('nav-'+id).classList.toggle('active', id===name);
-            });
-        }
-
-        function handlePlusClick() {
-            if(localStorage.getItem("nt_vip_king_v11") === "true") {
-                document.getElementById('upload-modal').style.display = 'flex';
-                document.getElementById('upload-step-1').style.display = 'block';
-                document.getElementById('upload-step-2').style.display = 'none';
-            } else { alert("VIP Access Required to Upload!"); tab('vip'); }
-        }
-
-        function previewLogo() {
-            const f = document.getElementById('up-logo').files[0];
-            const r = new FileReader();
-            r.onloadend = () => { tempLogo = r.result; document.getElementById('up-logo-status').style.display = 'block'; };
-            if(f) r.readAsDataURL(f);
-        }
-
-        function nextUploadStep() {
-            if(!document.getElementById('up-name').value || !document.getElementById('up-link').value || !tempLogo) return alert("Fill all data!");
-            document.getElementById('upload-step-1').style.display = 'none';
-            document.getElementById('upload-step-2').style.display = 'block';
-        }
-
-        function prevUploadStep() {
-            document.getElementById('upload-step-2').style.display = 'none';
-            document.getElementById('upload-step-1').style.display = 'block';
-        }
-
-        function finishUpload(target) {
-            database.ref('public_apps').push({ name: document.getElementById('up-name').value, file: document.getElementById('up-link').value, logo: tempLogo, target: target }).then(() => location.reload());
-        }
-
-        function simulateDownload(btn, url) {
-            let p = 0; btn.classList.add('active-dl');
-            let i = setInterval(() => {
-                p++; btn.innerText = `DOWNLOADING ${p}%`;
-                if(p >= 100) { clearInterval(i); btn.innerText = "DOWNLOAD"; btn.classList.remove('active-dl'); window.open(url, '_blank'); }
-            }, 30);
-        }
+        function googleLogin() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+        function logout() { if(confirm("Confirm Logout?")) { sessionStorage.removeItem('nt_v2'); auth.signOut().then(()=>location.reload()); } }
 
         function renderApps() {
-            database.ref('public_apps').on('value', snap => {
-                const h = document.getElementById('home-sec'), p = document.getElementById('pc-sec'), v = document.getElementById('vip-list');
-                if(!h) return;
-                h.innerHTML = ""; p.innerHTML = ""; if(v) v.innerHTML = "";
-                snap.forEach(c => {
-                    let a = c.val();
-                    let card = `<div class="app-card"><div class="app-logo-box"><img src="${a.logo}"></div><div class="app-title">${a.name}</div><button class="download-btn" onclick="simulateDownload(this, '${a.file}')">DOWNLOAD</button></div>`;
-                    if(a.target==='pc') p.innerHTML+=card; else if(a.target==='vip' && v) v.innerHTML+=card; else h.innerHTML+=card;
+            database.ref('public_apps_pro').on('value', snap => {
+                const home = document.getElementById('home-sec'), pc = document.getElementById('pc-sec'), vip = document.getElementById('vip-unlocked');
+                home.innerHTML = ""; pc.innerHTML = ""; vip.innerHTML = "";
+                snap.forEach(child => {
+                    let a = child.val();
+                    let key = child.key;
+                    let card = `
+                    <div class="app-card" data-cat="${a.category}">
+                        <button class="like-btn" onclick="likeApp('${key}')">❤️ ${a.likes || 0}</button>
+                        <div class="app-logo-box" onclick="openDetails('${key}')"><img src="${a.logo}"></div>
+                        <div class="app-title">${a.name}</div>
+                        <button class="download-btn" onclick="simulateDl(this, '${a.file}')">DOWNLOAD</button>
+                    </div>`;
+                    if(a.category === 'PC') pc.innerHTML += card;
+                    else if(a.category === 'VIP') vip.innerHTML += card;
+                    else home.innerHTML += card;
                 });
             });
         }
 
-        function pressNum(v) { let f = document.getElementById('activationInput'); if(v==='del') f.value=f.value.slice(0,-1); else f.value+=v; }
-        
-        function activateVIP() { 
-            if(document.getElementById('activationInput').value === "9860866915") { 
-                alert("VIP ACTIVATION SUCCESSFUL!");
-                localStorage.setItem("nt_vip_king_v11", "true"); 
-                localStorage.setItem("nt_vip_time_v11", Date.now()); 
-                location.reload(); 
-            } else alert("Wrong Code"); 
+        function openDetails(key) {
+            database.ref('public_apps_pro/' + key).once('value', snap => {
+                let a = snap.val();
+                document.getElementById('det-logo').src = a.logo;
+                document.getElementById('det-title').innerText = a.name;
+                document.getElementById('det-cat').innerText = "Category: " + a.category;
+                document.getElementById('det-desc').innerText = a.description || "No description provided.";
+                if(a.ss) { document.getElementById('det-ss').src = a.ss; document.getElementById('det-ss').style.display = 'block'; }
+                else { document.getElementById('det-ss').style.display = 'none'; }
+                document.getElementById('det-dl-btn').onclick = () => simulateDl(document.getElementById('det-dl-btn'), a.file);
+                document.getElementById('app-detail-modal').style.display = 'flex';
+            });
         }
 
-        function updateTimer() { if(localStorage.getItem("nt_vip_king_v11") === "true") { let start = parseInt(localStorage.getItem("nt_vip_time_v11")); let rem = (30*60)-Math.floor((Date.now()-start)/1000); if(rem<=0) { localStorage.removeItem("nt_vip_king_v11"); location.reload(); } else if(document.getElementById('vip-timer')) { let m=Math.floor(rem/60), s=rem%60; document.getElementById('vip-timer').innerText=`VIP Ends: ${m}:${s<10?'0'+s:s}`; } } }
-        function toggleSearch() { const s = document.getElementById('searchInput'); s.style.display = (s.style.display==='block'?'none':'block'); }
-        function filterApps(){ let q=document.getElementById('searchInput').value.toLowerCase(); document.querySelectorAll('.app-card').forEach(c=>{ c.style.display = c.innerText.toLowerCase().includes(q) ? "" : "none"; }); }
+        function simulateDl(btn, url) {
+            let p = 0; btn.disabled = true;
+            let i = setInterval(() => {
+                p += 5; btn.innerText = `LOADING ${p}%`;
+                if(p>=100){ clearInterval(i); btn.innerText = "DOWNLOAD"; btn.disabled = false; window.open(url, '_blank'); }
+            }, 50);
+        }
+
+        function likeApp(key) {
+            database.ref('public_apps_pro/' + key + '/likes').transaction(c => (c || 0) + 1);
+        }
+
+        function filterCat(c, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.app-card').forEach(card => {
+                if(c === 'all') card.style.display = 'block';
+                else card.style.display = card.getAttribute('data-cat') === c ? 'block' : 'none';
+            });
+        }
+
+        function finishUpload() {
+            let name = document.getElementById('up-name').value;
+            let link = document.getElementById('up-link').value;
+            let cat = document.getElementById('up-cat').value;
+            let logo = document.getElementById('up-logo-url').value;
+            let desc = document.getElementById('up-desc').value;
+            let ss = document.getElementById('up-ss-url').value;
+            if(!name || !link || !logo) return alert("Please fill basic info!");
+            database.ref('public_apps_pro').push({ name, file: link, category: cat, logo, description: desc, ss, likes: 0 })
+            .then(() => { alert("App Published!"); location.reload(); });
+        }
+
+        function submitReport() {
+            let app = document.getElementById('rep-app').value;
+            let msg = document.getElementById('rep-msg').value;
+            database.ref('reports').push({ app, msg, user: auth.currentUser.email }).then(() => { alert("Report Sent!"); closeModals(); });
+        }
+
+        function submitRequest() {
+            let name = document.getElementById('req-name').value;
+            database.ref('requests').push({ name, user: auth.currentUser.email }).then(() => { alert("Request Sent!"); closeModals(); });
+        }
+
+        function activateVIP() {
+            if(document.getElementById('activationInput').value === "9860866915") {
+                localStorage.setItem("nt_vip_king_v11", "true"); location.reload();
+            } else alert("Wrong Code");
+        }
+
+        function handlePlusClick() {
+            if(localStorage.getItem("nt_vip_king_v11") === "true") document.getElementById('upload-modal').style.display = 'flex';
+            else { alert("VIP Required!"); tab('vip'); }
+        }
+
+        function tab(n) {
+            ['home','pc','vip','about'].forEach(s => {
+                document.getElementById(s+'-sec').style.display = s===n ? (s==='about'?'block':'grid') : 'none';
+                document.getElementById('nav-'+s).classList.toggle('active', s===n);
+            });
+        }
+
+        function toggleTheme() { document.body.classList.toggle('amoled-theme'); }
+        function toggleSearch() { let s = document.getElementById('searchInput'); s.style.display = s.style.display==='block'?'none':'block'; }
+        function filterApps() {
+            let q = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.app-card').forEach(c => {
+                c.style.display = c.innerText.toLowerCase().includes(q) ? 'block' : 'none';
+            });
+        }
+        function openReportModal() { document.getElementById('report-modal').style.display = 'flex'; }
+        function openRequestModal() { document.getElementById('request-modal').style.display = 'flex'; }
         function closeModals() { document.querySelectorAll('.screen-overlay').forEach(m => m.style.display='none'); }
+        function handlePayment() { window.location.href = `upi://pay?pa=naitikthakare12345@oksbi&pn=NTSTORE&am=29&cu=INR`; }
     </script>
 </body>
 </html>
